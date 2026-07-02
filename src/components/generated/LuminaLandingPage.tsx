@@ -470,7 +470,7 @@ const ChromeDivider = () => <div className="flex items-center justify-center gap
     height: '8px',
     transform: 'rotate(45deg)',
     background: '#C9A044',
-    border: '1px solid rgba(255,255,255,0.4)',
+    border: '1px solid var(--border)',
     boxShadow: '0 2px 6px rgba(201,160,68,0.4)'
   }} aria-hidden="true" />
     <div style={{
@@ -535,18 +535,16 @@ const SectionLabelLeft = ({
 
 const SectionTitle = ({
   children,
-  center = false,
-  darkText = false
+  center = false
 }: {
   children: React.ReactNode;
   center?: boolean;
-  darkText?: boolean;
 }) => <div className={cn('relative', center ? 'text-center' : 'text-left')} style={{
   lineHeight: 1
 }}>
     <div aria-hidden="true" className="text-5xl md:text-7xl font-bold uppercase tracking-tight select-none pointer-events-none" style={{
     fontFamily: 'Oswald, sans-serif',
-    WebkitTextStroke: darkText ? '1px rgba(0,0,0,0.15)' : '1px rgba(255,255,255,0.1)',
+    WebkitTextStroke: '1px var(--border)',
     color: 'transparent',
     position: 'absolute',
     inset: 0,
@@ -554,9 +552,8 @@ const SectionTitle = ({
   }}>
       {children}
     </div>
-    <div className="text-5xl md:text-7xl font-bold uppercase tracking-tight relative" style={{
-    fontFamily: 'Oswald, sans-serif',
-    color: darkText ? '#111111' : '#ffffff'
+    <div className="text-5xl md:text-7xl font-bold uppercase tracking-tight relative text-foreground" style={{
+    fontFamily: 'Oswald, sans-serif'
   }}>
       {children}
     </div>
@@ -609,21 +606,16 @@ const MeshTexture = ({
 ───────────────────────────────────────────── */
 
 const SectionNumber = ({
-  num,
-  bright = false,
-  dark = false
+  num
 }: {
   num: string;
-  bright?: boolean;
-  dark?: boolean;
-}) => <div aria-hidden="true" className="select-none pointer-events-none leading-none" style={{
+}) => <div aria-hidden="true" className="select-none pointer-events-none leading-none text-foreground/5" style={{
   position: 'absolute',
   top: 'clamp(16px, 3vw, 24px)',
   right: 'clamp(16px, 3vw, 48px)',
   fontFamily: 'Oswald, sans-serif',
   fontWeight: 700,
   fontSize: 'clamp(60px, 20vw, 120px)',
-  color: dark ? 'rgba(0,0,0,0.03)' : (bright ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.03)'),
   lineHeight: 1,
   zIndex: 0
 }}>
@@ -666,7 +658,9 @@ const Navbar = () => {
     e.preventDefault();
     scrollToSection(href, () => setOpen(false));
   };
-  return <nav className={cn('fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-5 sm:px-8 md:px-10', scrolled ? 'bg-[#080808]/90 backdrop-blur-xl border-b border-white/[0.06] py-3 h-16 md:h-20' : 'bg-transparent py-4 md:py-5 h-16 md:h-20')}>
+  return <nav className={cn('fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-5 sm:px-8 md:px-10 theme-charcoal', scrolled ? 'backdrop-blur-xl border-b border-border py-3 h-16 md:h-20' : 'py-4 md:py-5 h-16 md:h-20')} style={{
+    background: scrolled ? 'rgba(28, 28, 30, 0.95)' : 'transparent'
+  }}>
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         {/* Logo */}
         <a href="#" onClick={e => {
@@ -688,7 +682,7 @@ const Navbar = () => {
           {NAV_LINKS.map(link => {
           const isActive = activeSection === link.href.replace('#', '');
           return <a key={link.href} href={link.href} onClick={e => handleNavClick(e, link.href)} className="group flex flex-col items-center gap-0.5">
-                <span className={cn('text-[10px] uppercase transition-colors duration-300', isActive ? 'text-white' : 'text-white/40 group-hover:text-white')} style={{
+                <span className={cn('text-[10px] uppercase transition-colors duration-300', isActive ? 'text-foreground font-semibold' : 'text-foreground/60 group-hover:text-foreground')} style={{
               letterSpacing: '0.35em',
               fontFamily: 'Inter, sans-serif'
             }}>
@@ -699,19 +693,19 @@ const Navbar = () => {
               display: 'block'
             }} aria-hidden="true" /> : <span className="block w-0 group-hover:w-full h-px bg-[#C9A044] transition-all duration-300" aria-hidden="true" />}
               </a>;
-        })}
+          })}
         </div>
 
         {/* Right actions */}
         <div className="flex items-center gap-3">
-          <a href="#contact" onClick={e => handleNavClick(e, '#contact')} className="hidden md:flex items-center gap-1.5 border border-white/30 px-4 py-2 text-white text-[10px] font-bold uppercase hover:bg-[#C9A044] hover:text-black hover:border-[#C9A044] transition-all duration-300 min-h-[44px]" style={{
+          <a href="#contact" onClick={e => handleNavClick(e, '#contact')} className="hidden md:flex items-center gap-1.5 border border-foreground/30 px-4 py-2 text-foreground text-[10px] font-bold uppercase hover:bg-[#C9A044] hover:text-black hover:border-[#C9A044] transition-all duration-300 min-h-[44px]" style={{
           letterSpacing: '0.3em',
           fontFamily: 'Inter, sans-serif'
         }}>
             <span>Get In Touch</span>
             <ArrowUpRight size={10} />
           </a>
-          <button className="lg:hidden text-white min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+          <button className="lg:hidden text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -1020,7 +1014,7 @@ const ContactForm = () => {
       setSubmitting(false);
     }
   };
-  const fieldClass = "w-full bg-[#111] border border-white/[0.08] focus:border-[#C9A044] focus:ring-2 focus:ring-[#C9A044]/30 focus-visible:ring-2 focus-visible:ring-[#C9A044] focus-visible:outline-none outline-none px-4 py-3 text-white text-sm font-light placeholder-white/20 transition-colors duration-200 rounded-none disabled:opacity-50";
+  const fieldClass = "w-full bg-card border border-border focus:border-[#C9A044] focus:ring-2 focus:ring-[#C9A044]/30 focus-visible:ring-2 focus-visible:ring-[#C9A044] focus-visible:outline-none outline-none px-4 py-3 text-foreground text-sm font-light placeholder-foreground/40 transition-colors duration-200 rounded-none disabled:opacity-50";
   if (submitted) {
     return <motion.div initial={{
       opacity: 0,
@@ -1111,7 +1105,7 @@ export const LuminaLandingPage = () => {
   React.useEffect(() => {
     document.title = 'Big Papi Investments (Pty) Ltd — Media · Events · Communications';
   }, []);
-  return <div className="relative min-h-screen bg-[#080808] text-white overflow-x-hidden text-[14px] sm:text-[15px] md:text-[16px]" style={{
+  return <div className="relative min-h-screen bg-background text-foreground overflow-x-hidden text-[14px] sm:text-[15px] md:text-[16px]" style={{
     fontFamily: 'Inter, sans-serif'
   }}>
       <ScrollProgressBar />
@@ -1121,9 +1115,7 @@ export const LuminaLandingPage = () => {
       <Lightbox images={GALLERY_IMAGES} activeImage={activeImage} onClose={() => setActiveImage(null)} onPrev={handleLightboxPrev} onNext={handleLightboxNext} />
 
       {/* ── HERO ── */}
-      <section id="hero" className="relative h-screen flex flex-col overflow-hidden" style={{
-      background: '#080808'
-    }}>
+      <section id="hero" className="relative h-screen flex flex-col overflow-hidden theme-charcoal">
         <img src="/website_pictures/IMG_9889.jpg" alt="" aria-hidden="true" className="object-cover object-center" style={{
         position: 'absolute',
         inset: 0,
@@ -1136,7 +1128,7 @@ export const LuminaLandingPage = () => {
         <div aria-hidden="true" className="block lg:hidden" style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to right, #080808 0%, rgba(8,8,8,0.95) 60%, rgba(8,8,8,0.80) 100%)',
+        background: 'linear-gradient(to right, var(--hero-gradient-start) 0%, var(--hero-gradient-mid) 60%, var(--hero-gradient-end) 100%)',
         zIndex: 1,
         pointerEvents: 'none'
       }} />
@@ -1144,7 +1136,7 @@ export const LuminaLandingPage = () => {
         <div aria-hidden="true" className="hidden lg:block" style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to right, #080808 0%, rgba(8,8,8,0.9) 45%, rgba(8,8,8,0.55) 100%)',
+        background: 'linear-gradient(to right, var(--hero-gradient-start) 0%, var(--hero-gradient-mid) 45%, var(--hero-gradient-end) 100%)',
         zIndex: 1,
         pointerEvents: 'none'
       }} />
@@ -1173,7 +1165,7 @@ export const LuminaLandingPage = () => {
               </motion.div>
 
               <motion.div {...fadeUp(0.1)} className="flex flex-col gap-0">
-                <div className="font-bold uppercase leading-none tracking-tight text-white" style={{
+                <div className="font-bold uppercase leading-none tracking-tight text-foreground" style={{
                 fontFamily: 'Oswald, sans-serif',
                 fontSize: 'clamp(40px, 10vw, 100px)'
               }}>
@@ -1188,7 +1180,7 @@ export const LuminaLandingPage = () => {
                 </div>
               </motion.div>
 
-              <motion.p {...fadeUp(0.2)} className="text-white/65 text-sm md:text-base font-light leading-relaxed max-w-xs sm:max-w-sm mt-4 mb-0">
+              <motion.p {...fadeUp(0.2)} className="text-foreground/75 text-sm md:text-base font-light leading-relaxed max-w-xs sm:max-w-sm mt-4 mb-0">
                 A 100% black-owned, youth-led enterprise at the forefront of media, events, and communications in South Africa.
               </motion.p>
 
@@ -1205,7 +1197,7 @@ export const LuminaLandingPage = () => {
                 <a href="#contact" onClick={e => {
                 e.preventDefault();
                 scrollToSection('#contact');
-              }} className="px-8 py-4 border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white/[0.06] transition-all duration-300 min-h-[44px] flex items-center justify-center sm:justify-start" style={{
+              }} className="px-8 py-4 border border-foreground/20 text-foreground text-[10px] font-bold uppercase tracking-widest hover:bg-foreground/[0.06] transition-all duration-300 min-h-[44px] flex items-center justify-center sm:justify-start" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>
                   Contact Us
@@ -1283,15 +1275,15 @@ export const LuminaLandingPage = () => {
       </section>
 
       {/* ── MARQUEE TICKER ── */}
-      <div className="w-full overflow-hidden border-y border-white/[0.04]" style={{
-      background: '#0a0a0a',
+      <div className="w-full overflow-hidden border-y border-border" style={{
+      background: 'var(--card)',
       position: 'relative',
       zIndex: 3
     }} aria-hidden="true">
         <div className="flex whitespace-nowrap" style={{
         animation: 'marquee 28s linear infinite'
       }}>
-          {[0, 1].map(i => <span key={i} className="inline-block py-2.5 md:py-3 text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase text-white/25" style={{
+          {[0, 1].map(i => <span key={i} className="inline-block py-2.5 md:py-3 text-[8px] sm:text-[9px] md:text-[10px] font-bold uppercase text-foreground/45" style={{
           letterSpacing: '0.4em',
           paddingRight: '4rem',
           fontFamily: 'Inter, sans-serif'
@@ -1320,9 +1312,7 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── ABOUT ── */}
-      <section id="about" className="relative py-16 md:py-24 lg:py-32 overflow-hidden" style={{
-      background: '#0d0d0d'
-    }}>
+      <section id="about" className="relative py-16 md:py-24 lg:py-32 overflow-hidden theme-cream">
         <SectionNumber num={SECTION_NUMBERS.about} />
         <MeshTexture opacity={0.04} />
         <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 lg:px-16 relative" style={{
@@ -1338,29 +1328,29 @@ export const LuminaLandingPage = () => {
             <div className="flex flex-col gap-8">
               {/* Body copy */}
               <motion.div {...fadeUp(0.1)} className="flex flex-col gap-6">
-                <h2 className="text-2xl font-semibold text-white leading-snug" style={{
+                <h2 className="text-2xl font-semibold text-foreground leading-snug" style={{
                 fontFamily: 'Oswald, sans-serif'
               }}>
                   BIG PAPI INVESTMENTS (PTY) LTD
                 </h2>
-                <p className="text-white/65 text-sm md:text-base font-light leading-[1.85]">
+                <p className="text-foreground/75 text-sm md:text-base font-light leading-[1.85]">
                   Big Papi Investments (Pty) Ltd is a{' '}
                   <strong className="font-semibold" style={{
                   color: '#C9A044'
                 }}>100% black-owned, youth-led enterprise</strong>{' '}
                   at the forefront of media, events, and communications in South Africa. Established in 2016 with a foundation in TV, film, and digital production, the company has grown into a dynamic hub that now also delivers strategic events, PR, and communications solutions.
                 </p>
-                <p className="text-white/65 text-sm md:text-base font-light leading-[1.85]">
+                <p className="text-foreground/75 text-sm md:text-base font-light leading-[1.85]">
                   Led by young black entrepreneurs, Big Papi Investments combines creativity, strategy, and innovation to empower brands, communities, and audiences. Our vision is to create platforms that inform, inspire, and connect, while driving transformation and measurable impact.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {['MEDIA', 'EVENTS', 'COMMUNICATIONS'].map(tag => <span key={tag} className="border border-white/10 bg-white/[0.03] px-4 py-1.5 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-white/50" style={{
+                  {['MEDIA', 'EVENTS', 'COMMUNICATIONS'].map(tag => <span key={tag} className="border border-foreground/10 bg-foreground/[0.03] px-4 py-1.5 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-foreground/60" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>
                       {tag}
                     </span>)}
                 </div>
-                <span className="border border-white/10 bg-white/[0.03] px-5 py-1.5 text-[9px] tracking-[0.3em] uppercase text-white/40 inline-block" style={{
+                <span className="border border-foreground/10 bg-foreground/[0.03] px-5 py-1.5 text-[9px] tracking-[0.3em] uppercase text-foreground/50 inline-block" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>
                   Company Profile 2026
@@ -1373,7 +1363,7 @@ export const LuminaLandingPage = () => {
           <div className="hidden lg:grid grid-cols-6 gap-12 items-start">
             {/* Vertical label */}
             <div className="flex items-center justify-center col-span-1">
-              <span className="text-[10px] uppercase font-bold text-white/20 select-none" style={{
+              <span className="text-[10px] uppercase font-bold text-foreground/20 select-none" style={{
               fontFamily: 'Oswald, sans-serif',
               letterSpacing: '0.5em',
               writingMode: 'vertical-lr',
@@ -1386,12 +1376,12 @@ export const LuminaLandingPage = () => {
             {/* Body copy */}
             <div className="col-span-3 flex flex-col gap-6">
               <motion.div {...fadeUp(0.1)}>
-                <h2 className="text-2xl font-semibold text-white leading-snug mb-4" style={{
+                <h2 className="text-2xl font-semibold text-foreground leading-snug mb-4" style={{
                 fontFamily: 'Oswald, sans-serif'
               }}>
                   BIG PAPI INVESTMENTS (PTY) LTD
                 </h2>
-                <p className="text-white/65 text-base font-light leading-[1.85]">
+                <p className="text-foreground/75 text-base font-light leading-[1.85]">
                   Big Papi Investments (Pty) Ltd is a{' '}
                   <strong className="font-semibold" style={{
                   color: '#C9A044'
@@ -1400,19 +1390,19 @@ export const LuminaLandingPage = () => {
                 </p>
               </motion.div>
               <motion.div {...fadeUp(0.18)}>
-                <p className="text-white/65 text-base font-light leading-[1.85]">
+                <p className="text-foreground/75 text-base font-light leading-[1.85]">
                   Led by young black entrepreneurs, Big Papi Investments combines creativity, strategy, and innovation to empower brands, communities, and audiences. Our vision is to create platforms that inform, inspire, and connect, while driving transformation and measurable impact.
                 </p>
               </motion.div>
               <motion.div {...fadeUp(0.24)} className="flex flex-wrap gap-2 mt-2">
-                {['MEDIA', 'EVENTS', 'COMMUNICATIONS'].map(tag => <span key={tag} className="border border-white/10 bg-white/[0.03] px-4 py-1.5 text-[10px] tracking-[0.3em] uppercase text-white/50" style={{
+                {['MEDIA', 'EVENTS', 'COMMUNICATIONS'].map(tag => <span key={tag} className="border border-foreground/10 bg-foreground/[0.03] px-4 py-1.5 text-[10px] tracking-[0.3em] uppercase text-foreground/60" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>
                     {tag}
                   </span>)}
               </motion.div>
               <motion.div {...fadeUp(0.28)}>
-                <span className="border border-white/10 bg-white/[0.03] px-5 py-1.5 text-[9px] tracking-[0.3em] uppercase text-white/40 inline-block mt-1" style={{
+                <span className="border border-foreground/10 bg-foreground/[0.03] px-5 py-1.5 text-[9px] tracking-[0.3em] uppercase text-foreground/50 inline-block mt-1" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>
                   Company Profile 2026
@@ -1440,8 +1430,8 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── LEADERSHIP ── */}
-      <section id="leadership" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
+      <section id="leadership" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-charcoal" style={{
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), var(--background)'
     }}>
         <SectionNumber num={SECTION_NUMBERS.leadership} />
         <img src="/website_pictures/IMG_9886.jpg" alt="" aria-hidden="true" className="object-cover object-center" style={{
@@ -1464,7 +1454,7 @@ export const LuminaLandingPage = () => {
           <motion.div {...fadeUp(0.06)}>
             <SectionTitle>LED BY VISION</SectionTitle>
           </motion.div>
-          <div className="border-b border-white/10 mt-6 mb-12" />
+          <div className="border-b border-border mt-6 mb-12" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8 relative">
             {/* Center vertical divider — only on md+ */}
@@ -1474,18 +1464,18 @@ export const LuminaLandingPage = () => {
             bottom: 0,
             left: '50%',
             width: '1px',
-            background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08), transparent)',
+            background: 'linear-gradient(to bottom, transparent, var(--border), transparent)',
             zIndex: 0
           }} />
 
             {/* Card 1 */}
-            <motion.div {...fadeUp(0.1)} className="group flex flex-col md:pr-10 border border-white/[0.05] hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
-            background: '#111111'
+            <motion.div {...fadeUp(0.1)} className="group flex flex-col md:pr-10 border border-border hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
+            background: 'var(--card)'
           }}>
               <div className="relative w-full overflow-hidden" style={{
               aspectRatio: '3/4',
               maxHeight: '420px',
-              background: 'linear-gradient(to bottom, #131313, #111111)'
+              background: 'var(--background)'
             }}>
                 <img src="/website_pictures/Malope-Le-Roux.JPG" alt="Malope Le Roux" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]" style={{
                 position: 'absolute',
@@ -1515,29 +1505,29 @@ export const LuminaLandingPage = () => {
                 }}>
                     MALOPE LE ROUX
                   </h3>
-                  <p className="text-[9px] uppercase tracking-[0.35em] text-white/50 mt-1" style={{
+                  <p className="text-[9px] uppercase tracking-[0.35em] text-foreground/50 mt-1" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>
                     MD, BIG DADDY PRODUCTIONS
                   </p>
                 </div>
               </div>
-              <div className="border-b border-white/[0.06]" />
+              <div className="border-b border-border" />
               <div className="p-6 md:p-8">
-                <p className="text-white/60 text-sm font-light leading-[1.9]">
+                <p className="text-foreground/70 text-sm font-light leading-[1.9]">
                   A seasoned media and production professional with over a decade of experience in videography, live performance, TV production, and digital media. Malope has produced work across corporate, entertainment, and social platforms, and continues to drive the division's creative and technical excellence.
                 </p>
               </div>
             </motion.div>
 
             {/* Card 2 */}
-            <motion.div {...fadeUp(0.2)} className="group flex flex-col md:pl-10 border border-white/[0.05] hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
-            background: '#111111'
+            <motion.div {...fadeUp(0.2)} className="group flex flex-col md:pl-10 border border-border hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
+            background: 'var(--card)'
           }}>
               <div className="relative w-full overflow-hidden" style={{
               aspectRatio: '3/4',
               maxHeight: '420px',
-              background: 'linear-gradient(to bottom, #131313, #111111)'
+              background: 'var(--background)'
             }}>
                 <img src="/website_pictures/Dumile-Nkosi.JPG" alt="Dumisile Nkosi" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]" style={{
                 position: 'absolute',
@@ -1567,16 +1557,16 @@ export const LuminaLandingPage = () => {
                 }}>
                     DUMISILE NKOSI
                   </h3>
-                  <p className="text-[9px] uppercase tracking-[0.35em] text-white/50 mt-1" style={{
+                  <p className="text-[9px] uppercase tracking-[0.35em] text-foreground/50 mt-1" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>
                     MD, BIG DADDY EVENTS AND COMMUNICATIONS
                   </p>
                 </div>
               </div>
-              <div className="border-b border-white/[0.06]" />
+              <div className="border-b border-border" />
               <div className="p-6 md:p-8">
-                <p className="text-white/60 text-sm font-light leading-[1.9]">
+                <p className="text-foreground/70 text-sm font-light leading-[1.9]">
                   A global youth advocate, brand and marketing strategist, and communications specialist, Dumisile brings more than 13 years of leadership experience in events, PR, and brand strategy. She also serves as a Working Group Member of the BRICS Youth Council, representing South Africa on international platforms for youth, innovation, and sustainable development.
                 </p>
               </div>
@@ -1588,9 +1578,7 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── DIVISIONS ── */}
-      <section id="divisions" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#0f0f0f'
-    }}>
+      <section id="divisions" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-cream">
         <SectionNumber num={SECTION_NUMBERS.divisions} />
         <MeshTexture opacity={0.04} />
         <div className="max-w-7xl mx-auto relative" style={{
@@ -1603,14 +1591,14 @@ export const LuminaLandingPage = () => {
           <motion.div {...fadeUp(0.06)}>
             <SectionTitle>OUR CRAFT</SectionTitle>
           </motion.div>
-          <div className="border-b border-white/10 mt-6 mb-8" />
+          <div className="border-b border-border mt-6 mb-8" />
 
           {/* Tab bar — sticky, horizontally scrollable on mobile */}
           <div className="sticky top-16 md:top-20 z-30 mb-10" style={{
-          background: '#0f0f0f'
+          background: 'var(--background)'
         }}>
             <div className="overflow-x-auto scrollbar-hide">
-              <div className="flex items-end border-b border-white/[0.06] min-w-max">
+              <div className="flex items-end border-b border-border min-w-max">
                 {([{
                 key: 'productions',
                 label: 'BIG DADDY PRODUCTIONS'
@@ -1623,7 +1611,7 @@ export const LuminaLandingPage = () => {
               }] as {
                 key: 'productions' | 'events' | 'talent';
                 label: string;
-              }[]).map(tab => <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={cn('shrink-0 px-4 sm:px-6 py-3 text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-200 whitespace-nowrap min-h-[44px]', activeTab === tab.key ? 'border-b-2 border-[#C9A044] text-white font-bold' : 'text-white/30 hover:text-white/60 border-b-2 border-transparent font-normal')} style={{
+              }[]).map(tab => <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={cn('shrink-0 px-4 sm:px-6 py-3 text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-200 whitespace-nowrap min-h-[44px]', activeTab === tab.key ? 'border-b-2 border-[#C9A044] text-foreground font-bold' : 'text-foreground/40 hover:text-foreground/70 border-b-2 border-transparent font-normal')} style={{
                 fontFamily: 'Oswald, sans-serif',
                 marginBottom: '-1px'
               }}>
@@ -1649,27 +1637,27 @@ export const LuminaLandingPage = () => {
           }}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
               borderLeft: '4px solid #C9A044',
-              background: '#161616'
+              background: 'var(--card)'
             }}>
                   <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                    <img src="/Big-Papi-Productions.jpg" alt="Big Papi Productions Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-white/5 p-0.5" />
-                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
+                    <img src="/Big-Papi-Productions.jpg" alt="Big Papi Productions Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-foreground/5 p-0.5" />
+                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-foreground" style={{
                   fontFamily: 'Oswald, sans-serif'
                 }}>BIG DADDY PRODUCTIONS</h3>
                   </div>
-                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40 self-start sm:self-auto" style={{
+                  <span className="shrink-0 border border-border px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-foreground/55 self-start sm:self-auto" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>6 SERVICES</span>
                 </div>
 
-                <div className="relative w-full overflow-hidden border-y border-white/[0.04] mb-8" style={{
+                <div className="relative w-full overflow-hidden border-y border-border mb-8" style={{
               height: '128px'
             }}>
                   <img src="/website_pictures/IMG_9891.jpg" alt="Video production film set" loading="lazy" className="w-full h-full object-cover" />
                   <div aria-hidden="true" style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(to right, rgba(8,8,8,0.8) 0%, transparent 40%, rgba(8,8,8,0.8) 100%)'
+                background: 'linear-gradient(to right, var(--hero-gradient-start) 0%, transparent 40%, var(--hero-gradient-start) 100%)'
               }} />
                   <div aria-hidden="true" className="flex items-center justify-center" style={{
                 position: 'absolute',
@@ -1677,7 +1665,7 @@ export const LuminaLandingPage = () => {
                 fontFamily: 'Oswald, sans-serif',
                 fontWeight: 700,
                 fontSize: 'clamp(1.25rem, 4vw, 2.25rem)',
-                color: 'rgba(255,255,255,0.1)',
+                color: 'var(--border)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em'
               }}>
@@ -1685,38 +1673,38 @@ export const LuminaLandingPage = () => {
                   </div>
                 </div>
 
-                <p className="text-white/65 text-sm leading-relaxed font-light max-w-3xl mb-10">
+                <p className="text-foreground/75 text-sm leading-relaxed font-light max-w-3xl mb-10">
                   Founded in 2016, Big Daddy Productions is the original creative arm of Big Papi Investments, specialising in TV, film, music, and corporate production. The division has delivered a strong portfolio of work across entertainment, corporate, and social impact spaces, demonstrating technical precision and storytelling excellence.
                 </p>
 
                 <div className="flex flex-wrap gap-1.5 mb-12">
-                  {PRODUCTIONS_PILLS.map(pill => <span key={pill.id} className="border border-white/[0.1] px-3 py-2 text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase text-white/60 hover:border-white/40 hover:text-white transition-all duration-200 cursor-default" style={{
+                  {PRODUCTIONS_PILLS.map(pill => <span key={pill.id} className="border border-border px-3 py-2 text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase text-foreground/60 hover:border-foreground/40 hover:text-foreground transition-all duration-200 cursor-default" style={{
                 borderLeft: '2px solid rgba(201,160,68,0.6)',
-                background: '#111111',
+                background: 'var(--background)',
                 fontFamily: 'Inter, sans-serif'
               }}>
                       {pill.label}
                     </span>)}
                 </div>
 
-                <div className="border border-white/[0.06]" style={{
+                <div className="border border-border" style={{
               background: 'transparent'
             }}>
-                  <div className="px-4 sm:px-6 py-4 border-b border-white/[0.05]">
-                    <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold" style={{
+                  <div className="px-4 sm:px-6 py-4 border-b border-border">
+                    <p className="text-[9px] uppercase tracking-widest text-foreground/45 font-bold" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>Previous Work</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                    {ALL_PREV_WORK.map((item, idx) => <div key={item.id} className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 border-b border-white/[0.05]" style={{
-                  background: idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'
+                    {ALL_PREV_WORK.map((item, idx) => <div key={item.id} className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 border-b border-border" style={{
+                  background: idx % 2 === 0 ? 'var(--card)' : 'transparent'
                 }}>
-                        <span className="shrink-0 border border-white/[0.08] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white/30 whitespace-nowrap" style={{
+                        <span className="shrink-0 border border-border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-foreground/45 whitespace-nowrap" style={{
                     fontFamily: 'Inter, sans-serif'
                   }}>
                           {item.category}
                         </span>
-                        <span className="text-white/65 text-sm font-light">{item.title}</span>
+                        <span className="text-foreground/75 text-sm font-light">{item.title}</span>
                       </div>)}
                   </div>
                 </div>
@@ -1736,33 +1724,33 @@ export const LuminaLandingPage = () => {
           }}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
               borderLeft: '4px solid #C9A044',
-              background: '#161616'
+              background: 'var(--card)'
             }}>
                   <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                    <img src="/Big-Daddy-Events-And-Communication.jpg" alt="Big Daddy Events & Communications Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-white/5 p-0.5" />
-                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
+                    <img src="/Big-Daddy-Events-And-Communication.jpg" alt="Big Daddy Events & Communications Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-foreground/5 p-0.5" />
+                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-foreground" style={{
                   fontFamily: 'Oswald, sans-serif'
                 }}>BIG DADDY EVENTS &amp; COMMUNICATIONS</h3>
                   </div>
-                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40 self-start sm:self-auto" style={{
+                  <span className="shrink-0 border border-border px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-foreground/55 self-start sm:self-auto" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>5 SERVICES</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10">
-                  <div className="group overflow-hidden border border-white/[0.05]" style={{
+                  <div className="group overflow-hidden border border-border" style={{
                 aspectRatio: '16/9'
               }}>
                     <img src="/website_pictures/IMG_9895.jpg" alt="Gala event tables with lights" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                   </div>
-                  <div className="group overflow-hidden border border-white/[0.05]" style={{
+                  <div className="group overflow-hidden border border-border" style={{
                 aspectRatio: '16/9'
               }}>
                     <img src="/website_pictures/IMG_9896.jpg" alt="Speaker at podium" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-white/[0.06]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-border">
                   <div className="p-6 md:p-8 flex flex-col gap-5" style={{
                 background: 'transparent'
               }}>
@@ -1773,18 +1761,18 @@ export const LuminaLandingPage = () => {
                     background: 'linear-gradient(to bottom, #C9A044, transparent)',
                     marginTop: '2px'
                   }} aria-hidden="true" />
-                      <h3 className="text-xl font-bold uppercase text-white" style={{
+                      <h3 className="text-xl font-bold uppercase text-foreground" style={{
                     fontFamily: 'Oswald, sans-serif'
                   }}>BIG DADDY EVENTS &amp; COMMUNICATIONS</h3>
                     </div>
-                    <p className="text-white/65 text-sm leading-relaxed font-light">
+                    <p className="text-foreground/75 text-sm leading-relaxed font-light">
                       The newest division of Big Papi Investments, providing holistic event management, communications, and PR solutions. Built on design-thinking and strategy, this division goes beyond logistics to deliver events and campaigns that foster engagement, visibility, and sustainable outcomes.
                     </p>
                     <div>
-                      <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mb-3" style={{
+                      <p className="text-[9px] uppercase tracking-widest text-foreground/45 font-bold mb-3" style={{
                     fontFamily: 'Inter, sans-serif'
                   }}>Event Strategy &amp; Project Management</p>
-                      <ul className="flex flex-col gap-2 text-white/65 text-sm font-light">
+                      <ul className="flex flex-col gap-2 text-foreground/75 text-sm font-light">
                         <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full shrink-0 mt-2" style={{
                         background: '#C9A044'
                       }} aria-hidden="true" /><span>Master planning and national event roadmap</span></li>
@@ -1803,12 +1791,12 @@ export const LuminaLandingPage = () => {
 
                   <div className="hidden md:block" aria-hidden="true" style={{
                 width: '1px',
-                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent)',
+                background: 'linear-gradient(to bottom, transparent, var(--border), transparent)',
                 alignSelf: 'stretch',
                 flexShrink: 0
               }} />
 
-                  <div className="p-6 md:p-8 flex flex-col gap-5 border-t md:border-t-0 border-white/[0.06]" style={{
+                  <div className="p-6 md:p-8 flex flex-col gap-5 border-t md:border-t-0 border-border" style={{
                 background: 'transparent'
               }}>
                     <div className="flex items-start gap-4">
@@ -1818,14 +1806,14 @@ export const LuminaLandingPage = () => {
                     background: 'linear-gradient(to bottom, #C9A044, transparent)',
                     marginTop: '2px'
                   }} aria-hidden="true" />
-                      <h3 className="text-xl font-bold uppercase text-white" style={{
+                      <h3 className="text-xl font-bold uppercase text-foreground" style={{
                     fontFamily: 'Oswald, sans-serif'
                   }}>BRAND MANAGEMENT &amp; STRATEGY</h3>
                     </div>
-                    <p className="text-white/65 text-sm leading-relaxed font-light">
+                    <p className="text-foreground/75 text-sm leading-relaxed font-light">
                       We build, position, and grow brands through intentional strategy, storytelling, and market alignment. Our approach integrates communications, visibility, partnerships, and reputation management to ensure long-term brand equity and influence.
                     </p>
-                    <ul className="flex flex-col gap-2 text-white/65 text-sm font-light">
+                    <ul className="flex flex-col gap-2 text-foreground/75 text-sm font-light">
                       <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full shrink-0 mt-2" style={{
                       background: '#C9A044'
                     }} aria-hidden="true" /><span>Brand Positioning and Development</span></li>
@@ -1857,21 +1845,21 @@ export const LuminaLandingPage = () => {
           }}>
                 <div className="flex items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
               borderLeft: '4px solid #C9A044',
-              background: '#161616'
+              background: 'var(--card)'
             }}>
-                  <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
+                  <h3 className="text-xl sm:text-2xl font-bold uppercase text-foreground" style={{
                 fontFamily: 'Oswald, sans-serif'
               }}>TALENT &amp; COMMUNICATIONS</h3>
-                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40" style={{
+                  <span className="shrink-0 border border-border px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-foreground/55" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>3 SERVICES</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-white/[0.06]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-border">
                   <div className="flex flex-col" style={{
                 background: 'transparent'
               }}>
-                    <div className="p-6 md:p-8 flex flex-col gap-4 border-b border-white/[0.05]">
+                    <div className="p-6 md:p-8 flex flex-col gap-4 border-b border-border">
                       <div className="flex items-start gap-4">
                         <div className="shrink-0 rounded-full" style={{
                       width: '4px',
@@ -1879,7 +1867,7 @@ export const LuminaLandingPage = () => {
                       background: 'linear-gradient(to bottom, #C9A044, transparent)',
                       marginTop: '2px'
                     }} aria-hidden="true" />
-                        <h3 className="text-xl font-bold uppercase text-white" style={{
+                        <h3 className="text-xl font-bold uppercase text-foreground" style={{
                       fontFamily: 'Oswald, sans-serif'
                     }}>TALENT MANAGEMENT</h3>
                       </div>
@@ -1891,14 +1879,14 @@ export const LuminaLandingPage = () => {
                         <div aria-hidden="true" style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'linear-gradient(to top, #080808 0%, rgba(8,8,8,0.4) 40%, transparent 100%)'
+                      background: 'linear-gradient(to top, var(--background) 0%, rgba(8,8,8,0.05) 40%, transparent 100%)'
                     }} />
                       </div>
 
-                      <p className="text-white/65 text-sm font-light leading-relaxed">
+                      <p className="text-foreground/75 text-sm font-light leading-relaxed">
                         We represent, develop, and strategically position talent to maximise influence, opportunities, and commercial value.
                       </p>
-                      <ul className="flex flex-col gap-2 text-white/65 text-sm font-light">
+                      <ul className="flex flex-col gap-2 text-foreground/75 text-sm font-light">
                         <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full shrink-0 mt-2" style={{
                         background: '#C9A044'
                       }} aria-hidden="true" /><span>Talent Representation</span></li>
@@ -1921,11 +1909,11 @@ export const LuminaLandingPage = () => {
                       background: 'linear-gradient(to bottom, #C9A044, transparent)',
                       marginTop: '2px'
                     }} aria-hidden="true" />
-                        <h3 className="text-xl font-bold uppercase text-white" style={{
+                        <h3 className="text-xl font-bold uppercase text-foreground" style={{
                       fontFamily: 'Oswald, sans-serif'
                     }}>CAPABILITY AND POSITIONING</h3>
                       </div>
-                      <ul className="flex flex-col gap-2 text-white/65 text-sm font-light">
+                      <ul className="flex flex-col gap-2 text-foreground/75 text-sm font-light">
                         <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full shrink-0 mt-2" style={{
                         background: '#C9A044'
                       }} aria-hidden="true" /><span>Proven capacity to manage high-attendance events</span></li>
@@ -1944,12 +1932,12 @@ export const LuminaLandingPage = () => {
 
                   <div className="hidden md:block" aria-hidden="true" style={{
                 width: '1px',
-                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent)',
+                background: 'linear-gradient(to bottom, transparent, var(--border), transparent)',
                 alignSelf: 'stretch',
                 flexShrink: 0
               }} />
 
-                  <div className="p-6 md:p-8 flex flex-col gap-4 border-t md:border-t-0 border-white/[0.06]" style={{
+                  <div className="p-6 md:p-8 flex flex-col gap-4 border-t md:border-t-0 border-border" style={{
                 background: 'transparent'
               }}>
                     <div className="flex items-start gap-4">
@@ -1959,11 +1947,11 @@ export const LuminaLandingPage = () => {
                     background: 'linear-gradient(to bottom, #C9A044, transparent)',
                     marginTop: '2px'
                   }} aria-hidden="true" />
-                      <h3 className="text-xl font-bold uppercase text-white" style={{
+                      <h3 className="text-xl font-bold uppercase text-foreground" style={{
                     fontFamily: 'Oswald, sans-serif'
                   }}>COMMUNICATIONS AND PR</h3>
                     </div>
-                    <ul className="flex flex-col gap-2 text-white/65 text-sm font-light mb-4">
+                    <ul className="flex flex-col gap-2 text-foreground/75 text-sm font-light mb-4">
                       <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full shrink-0 mt-2" style={{
                       background: '#C9A044'
                     }} aria-hidden="true" /><span>Strategic communications planning</span></li>
@@ -1974,14 +1962,14 @@ export const LuminaLandingPage = () => {
                       background: '#C9A044'
                     }} aria-hidden="true" /><span>Reputation management and crisis communication</span></li>
                     </ul>
-                    <div className="h-px w-full border-b border-white/[0.06] my-2" />
-                    <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mb-2" style={{
+                    <div className="h-px w-full border-b border-border my-2" />
+                    <p className="text-[9px] uppercase tracking-widest text-foreground/45 font-bold mb-2" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>Key Service Areas</p>
                     <div className="flex flex-wrap gap-2">
-                      {EVENTS_PILLS.map(pill => <span key={pill.id} className="border border-white/[0.1] px-3 py-1.5 text-[8px] sm:text-[9px] font-bold tracking-[0.15em] uppercase text-white/60 hover:border-white/40 hover:text-white transition-all duration-200 cursor-default" style={{
+                      {EVENTS_PILLS.map(pill => <span key={pill.id} className="border border-border px-3 py-1.5 text-[8px] sm:text-[9px] font-bold tracking-[0.15em] uppercase text-foreground/60 hover:border-foreground/40 hover:text-foreground transition-all duration-200 cursor-default" style={{
                     borderLeft: '2px solid rgba(201,160,68,0.6)',
-                    background: '#111111',
+                    background: 'var(--background)',
                     fontFamily: 'Inter, sans-serif'
                   }}>
                           {pill.label}
@@ -1997,8 +1985,8 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── VALUE PROPOSITION ── */}
-      <section id="value" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
+      <section id="value" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-charcoal" style={{
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), var(--background)'
     }}>
         <SectionNumber num={SECTION_NUMBERS.value} />
         <MeshTexture opacity={0.03} />
@@ -2076,9 +2064,7 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── PROOF OF EXPERIENCE ── */}
-      <section id="experience" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#080808'
-    }}>
+      <section id="experience" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-cream">
         <SectionNumber num={SECTION_NUMBERS.experience} />
         <MeshTexture opacity={0.06} />
         <div className="max-w-7xl mx-auto relative" style={{
@@ -2095,14 +2081,14 @@ export const LuminaLandingPage = () => {
               </motion.div>
             </div>
             <motion.div {...fadeUp(0.08)}>
-              <span className="border border-white/10 px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40 self-end mb-1 inline-block" style={{
+              <span className="border border-border px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest text-foreground/55 self-end mb-1 inline-block" style={{
               fontFamily: 'Inter, sans-serif'
             }}>
                 THE PORTFOLIO
               </span>
             </motion.div>
           </div>
-          <div className="border-b border-white/10 mt-6 mb-12" />
+          <div className="border-b border-border mt-6 mb-12" />
 
           {/* Gallery mosaic */}
           {/* Mobile: uniform 2-column grid */}
@@ -2124,8 +2110,8 @@ export const LuminaLandingPage = () => {
               inset: 0,
               zIndex: 3
             }}>
-                  <div className="border border-white/30 w-8 h-8 flex items-center justify-center">
-                    <ArrowUpRight size={12} className="text-white/60" />
+                  <div className="border border-foreground/30 w-8 h-8 flex items-center justify-center">
+                    <ArrowUpRight size={12} className="text-foreground/60" />
                   </div>
                 </div>
               </div>)}
@@ -2158,8 +2144,8 @@ export const LuminaLandingPage = () => {
               inset: 0,
               zIndex: 3
             }}>
-                  <div className="border border-white/30 w-8 h-8 flex items-center justify-center">
-                    <ArrowUpRight size={12} className="text-white/60" />
+                  <div className="border border-foreground/30 w-8 h-8 flex items-center justify-center">
+                    <ArrowUpRight size={12} className="text-foreground/60" />
                   </div>
                 </div>
               </div>)}
@@ -2195,32 +2181,32 @@ export const LuminaLandingPage = () => {
               inset: 0,
               zIndex: 3
             }}>
-                  <div className="border border-white/30 w-8 h-8 flex items-center justify-center">
-                    <ArrowUpRight size={12} className="text-white/60" />
+                  <div className="border border-foreground/30 w-8 h-8 flex items-center justify-center">
+                    <ArrowUpRight size={12} className="text-foreground/60" />
                   </div>
                 </div>
               </div>)}
           </motion.div>
 
           {/* Event list */}
-          <motion.div {...fadeUp(0.15)} className="border border-white/[0.06]" style={{
-          background: '#111111'
+          <motion.div {...fadeUp(0.15)} className="border border-border" style={{
+          background: 'var(--card)'
         }}>
-            <div className="px-4 sm:px-6 py-4 border-b border-white/[0.05]">
-              <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold" style={{
+            <div className="px-4 sm:px-6 py-4 border-b border-border">
+              <p className="text-[9px] uppercase tracking-widest text-foreground/45 font-bold" style={{
               fontFamily: 'Inter, sans-serif'
             }}>
                 Selected Events &amp; Productions
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 p-4 sm:p-6">
-              {EVENT_ITEMS.map(ev => <div key={ev.id} className="flex items-start gap-3 py-2.5 border-b border-white/[0.05]">
+              {EVENT_ITEMS.map(ev => <div key={ev.id} className="flex items-start gap-3 py-2.5 border-b border-border">
                   <div className="shrink-0 mt-1.5 rotate-45" style={{
                 width: '6px',
                 height: '6px',
                 background: 'rgba(201,160,68,0.6)'
               }} aria-hidden="true" />
-                  <span className="text-white/65 text-sm font-light">{ev.name}</span>
+                  <span className="text-foreground/75 text-sm font-light">{ev.name}</span>
                 </div>)}
             </div>
           </motion.div>
@@ -2230,8 +2216,8 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── CLIENTS ── */}
-      <section id="clients" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
+      <section id="clients" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-charcoal" style={{
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), var(--background)'
     }}>
         <SectionNumber num={SECTION_NUMBERS.clients} />
         <MeshTexture opacity={0.03} />
@@ -2289,9 +2275,7 @@ export const LuminaLandingPage = () => {
       <SectionDividerLine />
 
       {/* ── CONTACT / FOOTER ── */}
-      <footer id="contact" className="relative pt-16 md:pt-24 pb-0 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#080808'
-    }}>
+      <footer id="contact" className="relative pt-16 md:pt-24 pb-0 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden theme-charcoal">
         <SectionNumber num={SECTION_NUMBERS.contact} />
         <img src="/website_pictures/IMG_9886.jpg" alt="" aria-hidden="true" className="object-cover object-center" style={{
         position: 'absolute',
@@ -2331,13 +2315,13 @@ export const LuminaLandingPage = () => {
               alt="Big Papi Productions Logo"
               className="h-14 sm:h-20 w-auto object-contain transition-opacity duration-300 hover:opacity-100 opacity-80"
             />
-            <div className="h-10 sm:h-12 w-px bg-white/10 hidden sm:block" aria-hidden="true" />
+            <div className="h-10 sm:h-12 w-px bg-foreground/10 hidden sm:block" aria-hidden="true" />
             <img
               src="/bp-logo.png"
               alt="Big Papi Investments Logo"
               className="h-14 sm:h-20 w-auto object-contain transition-opacity duration-300 hover:opacity-100 opacity-90"
             />
-            <div className="h-10 sm:h-12 w-px bg-white/10 hidden sm:block" aria-hidden="true" />
+            <div className="h-10 sm:h-12 w-px bg-foreground/10 hidden sm:block" aria-hidden="true" />
             <img
               src="/Big-Daddy-Events-And-Communication.jpg"
               alt="Big Daddy Events & Communications Logo"
@@ -2345,7 +2329,7 @@ export const LuminaLandingPage = () => {
             />
           </motion.div>
 
-          <motion.p {...fadeUp(0.08)} className="text-[10px] tracking-[0.5em] text-white/30 uppercase" style={{
+          <motion.p {...fadeUp(0.08)} className="text-[10px] tracking-[0.5em] text-foreground/40 uppercase" style={{
           fontFamily: 'Inter, sans-serif'
         }}>
             Media · Events · Communications
@@ -2371,29 +2355,29 @@ export const LuminaLandingPage = () => {
             {/* Col 1 */}
             <div className="flex flex-col gap-4 text-center sm:text-left items-center sm:items-start">
               <SectionLabelLeft>Reach Us</SectionLabelLeft>
-              <div className="h-px bg-white/[0.06] w-full mt-1 mb-2" />
+              <div className="h-px bg-foreground/[0.06] w-full mt-1 mb-2" />
               <a href="mailto:Dumi@bigdaddyevents.co.za" className="group flex items-start gap-3">
-                <Mail size={12} className="shrink-0 mt-0.5 group-hover:text-white/60 transition-colors" style={{
+                <Mail size={12} className="shrink-0 mt-0.5 group-hover:text-foreground/80 transition-colors" style={{
                 color: 'rgba(201,160,68,0.6)'
               }} />
                 <div>
-                  <p className="text-[9px] uppercase tracking-widest text-white/25 font-bold mb-0.5" style={{
+                  <p className="text-[9px] uppercase tracking-widest text-foreground/35 font-bold mb-0.5" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>Events Division</p>
-                  <p className="text-white/60 text-sm font-light group-hover:text-white transition-colors group-hover:underline underline-offset-4 group-hover:decoration-[#C9A044]">
+                  <p className="text-foreground/70 text-sm font-light group-hover:text-foreground transition-colors group-hover:underline underline-offset-4 group-hover:decoration-[#C9A044]">
                     Dumi@bigdaddyevents.co.za
                   </p>
                 </div>
               </a>
               <a href="mailto:Malope@bigdaddyevents.co.za" className="group flex items-start gap-3">
-                <Mail size={12} className="shrink-0 mt-0.5 group-hover:text-white/60 transition-colors" style={{
+                <Mail size={12} className="shrink-0 mt-0.5 group-hover:text-foreground/80 transition-colors" style={{
                 color: 'rgba(201,160,68,0.6)'
               }} />
                 <div>
-                  <p className="text-[9px] uppercase tracking-widest text-white/25 font-bold mb-0.5" style={{
+                  <p className="text-[9px] uppercase tracking-widest text-foreground/35 font-bold mb-0.5" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>Productions Division</p>
-                  <p className="text-white/60 text-sm font-light group-hover:text-white transition-colors group-hover:underline underline-offset-4 group-hover:decoration-[#C9A044]">
+                  <p className="text-foreground/70 text-sm font-light group-hover:text-foreground transition-colors group-hover:underline underline-offset-4 group-hover:decoration-[#C9A044]">
                     Malope@bigdaddyevents.co.za
                   </p>
                 </div>
@@ -2403,16 +2387,16 @@ export const LuminaLandingPage = () => {
             {/* Col 2 */}
             <div className="flex flex-col gap-4 text-center sm:text-left items-center sm:items-start">
               <SectionLabelLeft>Find Us</SectionLabelLeft>
-              <div className="h-px bg-white/[0.06] w-full mt-1 mb-2" />
+              <div className="h-px bg-foreground/[0.06] w-full mt-1 mb-2" />
               <div className="flex items-start gap-3">
                 <MapPin size={12} className="shrink-0 mt-0.5" style={{
                 color: 'rgba(201,160,68,0.6)'
               }} />
                 <div>
-                  <p className="text-[9px] uppercase tracking-widest text-white/25 font-bold mb-0.5" style={{
+                  <p className="text-[9px] uppercase tracking-widest text-foreground/35 font-bold mb-0.5" style={{
                   fontFamily: 'Inter, sans-serif'
                 }}>Address</p>
-                  <p className="text-white/60 text-sm font-light leading-snug text-left">
+                  <p className="text-foreground/70 text-sm font-light leading-snug text-left">
                     Founders Hill Office Park<br />
                     Modderfontein, Johannesburg<br />
                     South Africa, 1609
@@ -2424,20 +2408,20 @@ export const LuminaLandingPage = () => {
             {/* Col 3 */}
             <div className="flex flex-col gap-4 text-center sm:text-left items-center sm:items-start">
               <SectionLabelLeft>Our Websites</SectionLabelLeft>
-              <div className="h-px bg-white/[0.06] w-full mt-1 mb-2" />
+              <div className="h-px bg-foreground/[0.06] w-full mt-1 mb-2" />
               <a href="http://www.bigpapiinvestments.co.za" target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3">
-                <Globe size={12} className="shrink-0 mt-0.5 group-hover:text-white/60 transition-colors" style={{
+                <Globe size={12} className="shrink-0 mt-0.5 group-hover:text-foreground/80 transition-colors" style={{
                 color: 'rgba(201,160,68,0.6)'
               }} />
-                <span className="text-white/60 text-sm font-light group-hover:text-white underline underline-offset-4 decoration-white/20 group-hover:decoration-[#C9A044] transition-colors">
+                <span className="text-foreground/70 text-sm font-light group-hover:text-foreground underline underline-offset-4 decoration-foreground/20 group-hover:decoration-[#C9A044] transition-colors">
                   www.bigpapiinvestments.co.za
                 </span>
               </a>
               <a href="http://www.bigdaddyevents.co.za" target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3">
-                <Globe size={12} className="shrink-0 mt-0.5 group-hover:text-white/60 transition-colors" style={{
+                <Globe size={12} className="shrink-0 mt-0.5 group-hover:text-foreground/80 transition-colors" style={{
                 color: 'rgba(201,160,68,0.6)'
               }} />
-                <span className="text-white/60 text-sm font-light group-hover:text-white underline underline-offset-4 decoration-white/20 group-hover:decoration-[#C9A044] transition-colors">
+                <span className="text-foreground/70 text-sm font-light group-hover:text-foreground underline underline-offset-4 decoration-foreground/20 group-hover:decoration-[#C9A044] transition-colors">
                   www.bigdaddyevents.co.za
                 </span>
               </a>
@@ -2445,56 +2429,32 @@ export const LuminaLandingPage = () => {
           </motion.div>
 
           {/* Bottom bar */}
-          <motion.div {...fadeUp(0.25)} className="w-full border-t border-white/[0.05] pt-8 pb-8 flex flex-col md:flex-row items-center gap-4 md:gap-6 mt-8">
-            <p className="text-[10px] text-white/25 uppercase tracking-widest order-2 md:order-1" style={{
+          <motion.div {...fadeUp(0.25)} className="w-full border-t border-border pt-8 pb-8 flex flex-col md:flex-row items-center gap-4 md:gap-6 mt-8">
+            <p className="text-[10px] text-foreground/35 uppercase tracking-widest order-2 md:order-1" style={{
             fontFamily: 'Inter, sans-serif'
           }}>
               © 2026 Big Papi Investments (Pty) Ltd. All rights reserved.
             </p>
-            <span className="border px-5 py-1.5 text-[9px] tracking-[0.4em] uppercase text-white/30 order-1 md:order-2 md:mx-auto" style={{
+            <span className="border px-5 py-1.5 text-[9px] tracking-[0.4em] uppercase text-foreground/45 order-1 md:order-2 md:mx-auto" style={{
             fontFamily: 'Inter, sans-serif',
             borderColor: 'rgba(201,160,68,0.2)'
           }}>
               Company Profile 2026
             </span>
             <div className="flex items-center gap-2 justify-center order-3">
-              <button aria-label="Instagram" className="w-11 h-11 border border-white/10 flex items-center justify-center text-white/30 transition-all" style={{
-              color: 'rgba(255,255,255,0.3)'
-            }} onMouseEnter={e => {
-              e.currentTarget.style.color = '#C9A044';
-              e.currentTarget.style.borderColor = 'rgba(201,160,68,0.4)';
-            }} onMouseLeave={e => {
-              e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-            }}>
+              <button aria-label="Instagram" className="w-11 h-11 border border-foreground/10 flex items-center justify-center text-foreground/45 hover:text-[#C9A044] hover:border-[#C9A044]/40 transition-all rounded-none">
                 <Instagram size={14} />
               </button>
-              <button aria-label="Twitter" className="w-11 h-11 border border-white/10 flex items-center justify-center text-white/30 transition-all" style={{
-              color: 'rgba(255,255,255,0.3)'
-            }} onMouseEnter={e => {
-              e.currentTarget.style.color = '#C9A044';
-              e.currentTarget.style.borderColor = 'rgba(201,160,68,0.4)';
-            }} onMouseLeave={e => {
-              e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-            }}>
+              <button aria-label="Twitter" className="w-11 h-11 border border-foreground/10 flex items-center justify-center text-foreground/45 hover:text-[#C9A044] hover:border-[#C9A044]/40 transition-all rounded-none">
                 <Twitter size={14} />
               </button>
-              <button aria-label="YouTube" className="w-11 h-11 border border-white/10 flex items-center justify-center text-white/30 transition-all" style={{
-              color: 'rgba(255,255,255,0.3)'
-            }} onMouseEnter={e => {
-              e.currentTarget.style.color = '#C9A044';
-              e.currentTarget.style.borderColor = 'rgba(201,160,68,0.4)';
-            }} onMouseLeave={e => {
-              e.currentTarget.style.color = 'rgba(255,255,255,0.3)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-            }}>
+              <button aria-label="YouTube" className="w-11 h-11 border border-foreground/10 flex items-center justify-center text-foreground/45 hover:text-[#C9A044] hover:border-[#C9A044]/40 transition-all rounded-none">
                 <Youtube size={14} />
               </button>
               <button onClick={() => window.scrollTo({
               top: 0,
               behavior: 'smooth'
-            })} aria-label="Back to top" className="flex items-center gap-1.5 border border-white/[0.1] px-4 py-2 text-[9px] tracking-[0.3em] uppercase text-white/30 hover:text-[#C9A044] hover:border-[#C9A044]/40 transition-all duration-200 rounded-none ml-2 min-h-[44px]" style={{
+            })} aria-label="Back to top" className="flex items-center gap-1.5 border border-foreground/20 px-4 py-2 text-[9px] tracking-[0.3em] uppercase text-foreground/45 hover:text-[#C9A044] hover:border-[#C9A044]/40 transition-all duration-200 rounded-none ml-2 min-h-[44px]" style={{
               fontFamily: 'Inter, sans-serif'
             }}>
                 <ArrowUp size={12} />
