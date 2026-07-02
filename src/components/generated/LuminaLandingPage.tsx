@@ -2,6 +2,7 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Menu, X, Film, Target, Users, Layers, Mail, Globe, MapPin, ArrowRight, Instagram, Twitter, Youtube, ArrowUpRight, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast, Toaster } from 'sonner';
 
 /* ─────────────────────────────────────────────
    TYPES
@@ -125,7 +126,7 @@ const CLIENTS_ROW3: ClientItem[] = [{
   name: 'Tradeway'
 }, {
   id: 'c14',
-  name: 'Letaba River College'
+  name: 'Letaba TVET College'
 }, {
   id: 'c15',
   name: 'WRSETA'
@@ -182,6 +183,50 @@ const GALLERY_IMAGES: GalleryImage[] = [{
   id: 'g9',
   src: '/website_pictures/IMG_9903.jpg',
   alt: 'Hands raised crowd'
+}, {
+  id: 'g10',
+  src: '/acsa_gallery/IMG-20260701-WA0003.jpg',
+  alt: 'ACSA event presentation'
+}, {
+  id: 'g11',
+  src: '/acsa_gallery/IMG-20260701-WA0004.jpg',
+  alt: 'ACSA event speakers'
+}, {
+  id: 'g12',
+  src: '/acsa_gallery/IMG-20260701-WA0005.jpg',
+  alt: 'ACSA event panel discussion'
+}, {
+  id: 'g13',
+  src: '/acsa_gallery/IMG-20260701-WA0006.jpg',
+  alt: 'ACSA event audience'
+}, {
+  id: 'g14',
+  src: '/acsa_gallery/IMG-20260701-WA0007.jpg',
+  alt: 'ACSA event ceremony'
+}, {
+  id: 'g15',
+  src: '/acsa_gallery/IMG-20260701-WA0008.jpg',
+  alt: 'ACSA event group photo'
+}, {
+  id: 'g16',
+  src: '/acsa_gallery/IMG-20260701-WA0009.jpg',
+  alt: 'ACSA event keynote speaker'
+}, {
+  id: 'g17',
+  src: '/acsa_gallery/IMG-20260701-WA0010.jpg',
+  alt: 'ACSA event networking'
+}, {
+  id: 'g18',
+  src: '/acsa_gallery/IMG-20260701-WA0011.jpg',
+  alt: 'ACSA event exhibition'
+}, {
+  id: 'g19',
+  src: '/acsa_gallery/IMG-20260701-WA0012.jpg',
+  alt: 'ACSA event stage setup'
+}, {
+  id: 'g20',
+  src: '/acsa_gallery/IMG-20260701-WA0013.jpg',
+  alt: 'ACSA event closing session'
 }];
 const EVENT_ITEMS: EventItem[] = [{
   id: 'e1',
@@ -490,16 +535,18 @@ const SectionLabelLeft = ({
 
 const SectionTitle = ({
   children,
-  center = false
+  center = false,
+  darkText = false
 }: {
   children: React.ReactNode;
   center?: boolean;
+  darkText?: boolean;
 }) => <div className={cn('relative', center ? 'text-center' : 'text-left')} style={{
   lineHeight: 1
 }}>
     <div aria-hidden="true" className="text-5xl md:text-7xl font-bold uppercase tracking-tight select-none pointer-events-none" style={{
     fontFamily: 'Oswald, sans-serif',
-    WebkitTextStroke: '1px rgba(255,255,255,0.1)',
+    WebkitTextStroke: darkText ? '1px rgba(0,0,0,0.15)' : '1px rgba(255,255,255,0.1)',
     color: 'transparent',
     position: 'absolute',
     inset: 0,
@@ -509,7 +556,7 @@ const SectionTitle = ({
     </div>
     <div className="text-5xl md:text-7xl font-bold uppercase tracking-tight relative" style={{
     fontFamily: 'Oswald, sans-serif',
-    color: '#ffffff'
+    color: darkText ? '#111111' : '#ffffff'
   }}>
       {children}
     </div>
@@ -563,10 +610,12 @@ const MeshTexture = ({
 
 const SectionNumber = ({
   num,
-  bright = false
+  bright = false,
+  dark = false
 }: {
   num: string;
   bright?: boolean;
+  dark?: boolean;
 }) => <div aria-hidden="true" className="select-none pointer-events-none leading-none" style={{
   position: 'absolute',
   top: 'clamp(16px, 3vw, 24px)',
@@ -574,7 +623,7 @@ const SectionNumber = ({
   fontFamily: 'Oswald, sans-serif',
   fontWeight: 700,
   fontSize: 'clamp(60px, 20vw, 120px)',
-  color: bright ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.03)',
+  color: dark ? 'rgba(0,0,0,0.03)' : (bright ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.03)'),
   lineHeight: 1,
   zIndex: 0
 }}>
@@ -630,7 +679,7 @@ const Navbar = () => {
           <img
             src="/bp-logo.png"
             alt="Big Papi Investments"
-            className="h-10 w-auto object-contain"
+            className="h-14 w-auto object-contain"
           />
         </a>
 
@@ -689,7 +738,7 @@ const Navbar = () => {
       }}>
             {/* Top bar */}
             <div className="flex items-center justify-between px-6 pt-5 pb-0">
-              <LogoMark size="sm" />
+              <LogoMark size="md" />
               <button className="text-white min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setOpen(false)} aria-label="Close menu">
                 <X size={22} />
               </button>
@@ -940,12 +989,38 @@ const ContactForm = () => {
     email: '',
     message: ''
   });
+  const [submitting, setSubmitting] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = React.useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/submit-enquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form)
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setSubmitted(true);
+        toast.success("Enquiry submitted successfully! We will be in touch soon.");
+      } else {
+        throw new Error(data.message || 'Failed to submit enquiry.');
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to submit enquiry. Please try again.';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
-  const fieldClass = "w-full bg-[#111] border border-white/[0.08] focus:border-[#C9A044] focus:ring-1 focus:ring-[#C9A044]/30 outline-none px-4 py-3 text-white text-sm font-light placeholder-white/20 transition-colors duration-200 rounded-none";
+  const fieldClass = "w-full bg-[#111] border border-white/[0.08] focus:border-[#C9A044] focus:ring-2 focus:ring-[#C9A044]/30 focus-visible:ring-2 focus-visible:ring-[#C9A044] focus-visible:outline-none outline-none px-4 py-3 text-white text-sm font-light placeholder-white/20 transition-colors duration-200 rounded-none disabled:opacity-50";
   if (submitted) {
     return <motion.div initial={{
       opacity: 0,
@@ -987,26 +1062,27 @@ const ContactForm = () => {
       <input type="text" placeholder="Your Name" value={form.name} onChange={e => setForm(prev => ({
       ...prev,
       name: e.target.value
-    }))} required className={fieldClass} style={{
+    }))} required disabled={submitting} className={fieldClass} style={{
       fontFamily: 'Inter, sans-serif'
     }} />
       <input type="email" placeholder="Email Address" value={form.email} onChange={e => setForm(prev => ({
       ...prev,
       email: e.target.value
-    }))} required className={fieldClass} style={{
+    }))} required disabled={submitting} className={fieldClass} style={{
       fontFamily: 'Inter, sans-serif'
     }} />
       <textarea rows={4} placeholder="Your message" value={form.message} onChange={e => setForm(prev => ({
       ...prev,
       message: e.target.value
-    }))} required className={fieldClass} style={{
+    }))} required disabled={submitting} className={fieldClass} style={{
       fontFamily: 'Inter, sans-serif',
       resize: 'vertical'
     }} />
-      <button type="submit" className="w-full bg-[#C9A044] text-black font-bold uppercase text-[11px] tracking-[0.3em] py-4 hover:bg-[#b8912e] transition-colors duration-200 rounded-none min-h-[44px]" style={{
+      {error && <p className="text-red-500 text-xs tracking-wide uppercase text-center mt-1" style={{ fontFamily: 'Inter, sans-serif' }}>{error}</p>}
+      <button type="submit" disabled={submitting} className="w-full bg-[#C9A044] text-black font-bold uppercase text-[11px] tracking-[0.3em] py-4 hover:bg-[#b8912e] transition-colors duration-200 rounded-none min-h-[44px] disabled:opacity-50" style={{
       fontFamily: 'Inter, sans-serif'
     }}>
-        START THE CONVERSATION
+        {submitting ? 'SENDING...' : 'START THE CONVERSATION'}
       </button>
     </form>;
 };
@@ -1041,6 +1117,7 @@ export const LuminaLandingPage = () => {
       <ScrollProgressBar />
       <ScrollToTopButton />
       <Navbar />
+      <Toaster position="bottom-right" theme="dark" />
       <Lightbox images={GALLERY_IMAGES} activeImage={activeImage} onClose={() => setActiveImage(null)} onPrev={handleLightboxPrev} onNext={handleLightboxNext} />
 
       {/* ── HERO ── */}
@@ -1364,7 +1441,7 @@ export const LuminaLandingPage = () => {
 
       {/* ── LEADERSHIP ── */}
       <section id="leadership" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#080808'
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
     }}>
         <SectionNumber num={SECTION_NUMBERS.leadership} />
         <img src="/website_pictures/IMG_9886.jpg" alt="" aria-hidden="true" className="object-cover object-center" style={{
@@ -1372,11 +1449,11 @@ export const LuminaLandingPage = () => {
         inset: 0,
         width: '100%',
         height: '100%',
-        opacity: 0.04,
+        opacity: 0.02,
         pointerEvents: 'none',
         zIndex: 0
       }} />
-        <MeshTexture opacity={0.06} />
+        <MeshTexture opacity={0.03} />
         <div className="max-w-7xl mx-auto relative" style={{
         zIndex: 10
       }}>
@@ -1402,13 +1479,13 @@ export const LuminaLandingPage = () => {
           }} />
 
             {/* Card 1 */}
-            <motion.div {...fadeUp(0.1)} className="group flex flex-col md:pr-10 border border-white/[0.05] hover:border-white/20 transition-all duration-500" style={{
-            background: '#080808'
+            <motion.div {...fadeUp(0.1)} className="group flex flex-col md:pr-10 border border-white/[0.05] hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
+            background: '#111111'
           }}>
               <div className="relative w-full overflow-hidden" style={{
               aspectRatio: '3/4',
               maxHeight: '420px',
-              background: 'linear-gradient(to bottom, #131313, #080808)'
+              background: 'linear-gradient(to bottom, #131313, #111111)'
             }}>
                 <img src="/website_pictures/Malope-Le-Roux.JPG" alt="Malope Le Roux" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]" style={{
                 position: 'absolute',
@@ -1428,7 +1505,7 @@ export const LuminaLandingPage = () => {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                background: 'linear-gradient(to top, rgba(8,8,8,1) 0%, rgba(8,8,8,0.7) 60%, transparent 100%)',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
                 padding: '28px 24px 20px',
                 zIndex: 5
               }}>
@@ -1454,13 +1531,13 @@ export const LuminaLandingPage = () => {
             </motion.div>
 
             {/* Card 2 */}
-            <motion.div {...fadeUp(0.2)} className="group flex flex-col md:pl-10 border border-white/[0.05] hover:border-white/20 transition-all duration-500" style={{
-            background: '#080808'
+            <motion.div {...fadeUp(0.2)} className="group flex flex-col md:pl-10 border border-white/[0.05] hover:border-[#C9A044]/40 transition-all duration-500 shadow-sm hover:shadow-md" style={{
+            background: '#111111'
           }}>
               <div className="relative w-full overflow-hidden" style={{
               aspectRatio: '3/4',
               maxHeight: '420px',
-              background: 'linear-gradient(to bottom, #131313, #080808)'
+              background: 'linear-gradient(to bottom, #131313, #111111)'
             }}>
                 <img src="/website_pictures/Dumile-Nkosi.JPG" alt="Dumisile Nkosi" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]" style={{
                 position: 'absolute',
@@ -1480,7 +1557,7 @@ export const LuminaLandingPage = () => {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                background: 'linear-gradient(to top, rgba(8,8,8,1) 0%, rgba(8,8,8,0.7) 60%, transparent 100%)',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
                 padding: '28px 24px 20px',
                 zIndex: 5
               }}>
@@ -1570,14 +1647,17 @@ export const LuminaLandingPage = () => {
           }} transition={{
             duration: 0.3
           }}>
-                <div className="flex items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
               borderLeft: '4px solid #C9A044',
               background: '#161616'
             }}>
-                  <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
-                fontFamily: 'Oswald, sans-serif'
-              }}>BIG DADDY PRODUCTIONS</h3>
-                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40" style={{
+                  <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+                    <img src="/Big-Papi-Productions.jpg" alt="Big Papi Productions Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-white/5 p-0.5" />
+                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
+                  fontFamily: 'Oswald, sans-serif'
+                }}>BIG DADDY PRODUCTIONS</h3>
+                  </div>
+                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40 self-start sm:self-auto" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>6 SERVICES</span>
                 </div>
@@ -1585,7 +1665,7 @@ export const LuminaLandingPage = () => {
                 <div className="relative w-full overflow-hidden border-y border-white/[0.04] mb-8" style={{
               height: '128px'
             }}>
-                  <img src="/website_pictures/IMG_9891.jpg" alt="Video production film set" className="w-full h-full object-cover" />
+                  <img src="/website_pictures/IMG_9891.jpg" alt="Video production film set" loading="lazy" className="w-full h-full object-cover" />
                   <div aria-hidden="true" style={{
                 position: 'absolute',
                 inset: 0,
@@ -1654,14 +1734,17 @@ export const LuminaLandingPage = () => {
           }} transition={{
             duration: 0.3
           }}>
-                <div className="flex items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 px-4 sm:px-6 py-4 sm:py-5" style={{
               borderLeft: '4px solid #C9A044',
               background: '#161616'
             }}>
-                  <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
-                fontFamily: 'Oswald, sans-serif'
-              }}>BIG DADDY EVENTS &amp; COMMUNICATIONS</h3>
-                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40" style={{
+                  <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+                    <img src="/Big-Daddy-Events-And-Communication.jpg" alt="Big Daddy Events & Communications Logo" className="h-10 sm:h-12 w-auto object-contain rounded bg-white/5 p-0.5" />
+                    <h3 className="text-xl sm:text-2xl font-bold uppercase text-white" style={{
+                  fontFamily: 'Oswald, sans-serif'
+                }}>BIG DADDY EVENTS &amp; COMMUNICATIONS</h3>
+                  </div>
+                  <span className="shrink-0 border border-white/10 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/40 self-start sm:self-auto" style={{
                 fontFamily: 'Inter, sans-serif'
               }}>5 SERVICES</span>
                 </div>
@@ -1670,12 +1753,12 @@ export const LuminaLandingPage = () => {
                   <div className="group overflow-hidden border border-white/[0.05]" style={{
                 aspectRatio: '16/9'
               }}>
-                    <img src="/website_pictures/IMG_9895.jpg" alt="Gala event tables with lights" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                    <img src="/website_pictures/IMG_9895.jpg" alt="Gala event tables with lights" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                   </div>
                   <div className="group overflow-hidden border border-white/[0.05]" style={{
                 aspectRatio: '16/9'
               }}>
-                    <img src="/website_pictures/IMG_9896.jpg" alt="Speaker at podium" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                    <img src="/website_pictures/IMG_9896.jpg" alt="Speaker at podium" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                   </div>
                 </div>
 
@@ -1804,7 +1887,7 @@ export const LuminaLandingPage = () => {
                       <div className="relative w-full overflow-hidden" style={{
                     height: '112px'
                   }}>
-                        <img src="/website_pictures/IMG_9897.jpg" alt="Concert crowd from performer POV" className="w-full h-full object-cover" />
+                        <img src="/website_pictures/IMG_9897.jpg" alt="Concert crowd from performer POV" loading="lazy" className="w-full h-full object-cover" />
                         <div aria-hidden="true" style={{
                       position: 'absolute',
                       inset: 0,
@@ -1915,9 +1998,9 @@ export const LuminaLandingPage = () => {
 
       {/* ── VALUE PROPOSITION ── */}
       <section id="value" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#111111'
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
     }}>
-        <SectionNumber num={SECTION_NUMBERS.value} bright />
+        <SectionNumber num={SECTION_NUMBERS.value} />
         <MeshTexture opacity={0.03} />
         <div className="max-w-7xl mx-auto relative" style={{
         zIndex: 1
@@ -1949,7 +2032,7 @@ export const LuminaLandingPage = () => {
             {VALUE_BAND_IMAGES.map((img, idx) => <div key={img.id} className="relative overflow-hidden" style={{
             flex: idx === 1 ? '1.5' : '1'
           }}>
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-opacity duration-500" style={{
+                <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-full object-cover transition-opacity duration-500" style={{
               opacity: 0.5
             }} onMouseEnter={e => e.currentTarget.style.opacity = '0.7'} onMouseLeave={e => e.currentTarget.style.opacity = '0.5'} />
                 <div aria-hidden="true" style={{
@@ -1958,7 +2041,7 @@ export const LuminaLandingPage = () => {
               left: 0,
               right: 0,
               height: '33%',
-              background: 'linear-gradient(to top, #111111, transparent)'
+              background: 'linear-gradient(to top, #141416, transparent)'
             }} />
               </div>)}
           </motion.div>
@@ -2027,7 +2110,7 @@ export const LuminaLandingPage = () => {
           gridAutoRows: '160px'
         }}>
             {GALLERY_IMAGES.map(img => <div key={img.id} className="overflow-hidden relative group cursor-pointer" onClick={() => setActiveImage(img)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && setActiveImage(img)} aria-label={`View ${img.alt}`}>
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
+                <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
               display: 'block'
             }} />
                 <div style={{
@@ -2056,7 +2139,7 @@ export const LuminaLandingPage = () => {
             gridColumn: 'span 2',
             gridRow: 'span 2'
           } : {}} onClick={() => setActiveImage(img)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && setActiveImage(img)} aria-label={`View ${img.alt}`}>
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
+                <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
               display: 'block'
             }} />
                 <div style={{
@@ -2090,7 +2173,7 @@ export const LuminaLandingPage = () => {
             gridColumn: 'span 2',
             gridRow: 'span 2'
           } : {}} onClick={() => setActiveImage(img)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && setActiveImage(img)} aria-label={`View ${img.alt}`}>
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
+                <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{
               display: 'block'
             }} />
                 <div style={{
@@ -2148,10 +2231,10 @@ export const LuminaLandingPage = () => {
 
       {/* ── CLIENTS ── */}
       <section id="clients" className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-8 md:px-12 lg:px-16 overflow-hidden" style={{
-      background: '#0d0d0d'
+      background: 'radial-gradient(circle at 50% 0%, rgba(201, 160, 68, 0.08) 0%, transparent 65%), #141416'
     }}>
         <SectionNumber num={SECTION_NUMBERS.clients} />
-        <MeshTexture opacity={0.04} />
+        <MeshTexture opacity={0.03} />
         <div className="max-w-7xl mx-auto relative" style={{
         zIndex: 1
       }}>
@@ -2177,7 +2260,7 @@ export const LuminaLandingPage = () => {
           height: '96px'
         }}>
             {CLIENTS_STRIP_IMAGES.map(img => <div key={img.id} className="overflow-hidden flex-1">
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" style={{
+                <img src={img.src} alt={img.alt} loading="lazy" className="w-full h-full object-cover" style={{
               opacity: 0.2
             }} />
               </div>)}
@@ -2242,8 +2325,24 @@ export const LuminaLandingPage = () => {
         <div className="max-w-5xl mx-auto relative flex flex-col items-center text-center gap-10" style={{
         zIndex: 1
       }}>
-          <motion.div {...fadeUp(0)}>
-            <LogoMark size="lg" />
+          <motion.div {...fadeUp(0)} className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+            <img
+              src="/Big-Papi-Productions.jpg"
+              alt="Big Papi Productions Logo"
+              className="h-14 sm:h-20 w-auto object-contain transition-opacity duration-300 hover:opacity-100 opacity-80"
+            />
+            <div className="h-10 sm:h-12 w-px bg-white/10 hidden sm:block" aria-hidden="true" />
+            <img
+              src="/bp-logo.png"
+              alt="Big Papi Investments Logo"
+              className="h-14 sm:h-20 w-auto object-contain transition-opacity duration-300 hover:opacity-100 opacity-90"
+            />
+            <div className="h-10 sm:h-12 w-px bg-white/10 hidden sm:block" aria-hidden="true" />
+            <img
+              src="/Big-Daddy-Events-And-Communication.jpg"
+              alt="Big Daddy Events & Communications Logo"
+              className="h-14 sm:h-20 w-auto object-contain transition-opacity duration-300 hover:opacity-100 opacity-80"
+            />
           </motion.div>
 
           <motion.p {...fadeUp(0.08)} className="text-[10px] tracking-[0.5em] text-white/30 uppercase" style={{
